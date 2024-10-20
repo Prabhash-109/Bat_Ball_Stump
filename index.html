@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bat Ball Stump Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-image: url("https://img.freepik.com/premium-photo/cricket-bat-ball-stumps-bails-placed-green-grass-cricket-pitch-background_933530-8851.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .game-container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h2 {
+            font-size: 36px;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+        .choice-button {
+            height: 120px;
+            width: 120px;
+            border-radius: 50%;
+            border: none;
+            background-color: #ffffff;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+        .choice-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(255,255,255,0.8);
+        }
+        .choice-button img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        #reset-btn {
+            height: 40px;
+            width: 100px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            background-color: #ffd700;
+            color: #000000;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        #reset-btn:hover {
+            background-color: #ffed4a;
+        }
+        h3 {
+            font-size: 24px;
+            color: #ffffff;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        #result {
+            font-size: 28px;
+            color: #ffd700;
+            margin: 20px 0;
+        }
+        #score {
+            font-size: 20px;
+            color: #4CAF50;
+            margin-top: 20px;
+        }
+        #result-image {
+            width: 100px;
+            height: 100px;
+            margin: 10px auto;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h2>Bat Ball Stump Game</h2>
+        <div>
+            <button class="choice-button" onclick="playGame('Bat')">
+                <img src="https://m.media-amazon.com/images/I/317VTY6RngL._AC_UF894,1000_QL80_.jpg" alt="Bat">
+            </button>
+            <button class="choice-button" onclick="playGame('Ball')">
+                <img src="https://t4.ftcdn.net/jpg/08/37/54/87/240_F_837548762_5erUAkIzDCLEbnVNehKH2Wk3lCxzcpqm.jpg" alt="Ball">
+            </button>
+            <button class="choice-button" onclick="playGame('Stump')">
+                <img src="https://t3.ftcdn.net/jpg/00/54/32/92/240_F_54329210_aZ0vxmc65OWMyDPzHbyc7Pyf3gLGSvWs.jpg" alt="Stump">
+            </button>
+        </div>
+        <h3 id="user-move"></h3>
+        <h3 id="computer-move"></h3>
+        <h3 id="result"></h3>
+        <img id="result-image" alt="Result">
+        <h3 id="score"></h3>
+        <button id="reset-btn" onclick="resetGame()">Reset</button>
+    </div>
+    
+    <script>
+        let user_move = document.querySelector('#user-move');
+        let computer_move = document.querySelector('#computer-move');
+        let result = document.querySelector('#result');
+        let score = document.querySelector('#score');
+        let reset_btn = document.querySelector('#reset-btn');
+        let result_image = document.querySelector('#result-image');
+
+        // Retrieve the score from localStorage or initialize a new object
+        let storedScore = localStorage.getItem('score_array');
+        let score_array = storedScore ? JSON.parse(storedScore) : {
+            win: 0,
+            lost: 0,
+            tie: 0
+        };
+
+        // Display the current score
+        function displayScore() {
+            score.innerText = `Won: ${score_array.win}, Losses: ${score_array.lost}, Tied: ${score_array.tie}`;
+        }
+
+        // Automatically display the score if it exists in localStorage when the page loads
+        if (storedScore) {
+            displayScore();
+        }
+
+        function playGame(userChoice) {
+            let computerChoice;
+            let gameResult;
+            const choices = ['Bat', 'Ball', 'Stump'];
+            const randomIndex = Math.floor((Math.random() * 3));
+            computerChoice = choices[randomIndex];
+            
+            if (userChoice === 'Bat') {
+                if (computerChoice === 'Ball') {
+                    score_array.win++;
+                    gameResult = 'You Won the match';
+                    setResultImage('win');
+                } else if (computerChoice === 'Stump') {
+                    score_array.lost++;
+                    gameResult = 'You Lost the match';
+                    setResultImage('lose');
+                } else {
+                    score_array.tie++;
+                    gameResult = 'Match Tied';
+                    setResultImage('tie');
+                }
+            } else if (userChoice === 'Ball') {
+                if (computerChoice === 'Stump') {
+                    score_array.win++;
+                    gameResult = 'You Won the game';
+                    setResultImage('win');
+                } else if (computerChoice === 'Bat') {
+                    score_array.lost++;
+                    gameResult = 'You Lost the game';
+                    setResultImage('lose');
+                } else {
+                    score_array.tie++;
+                    gameResult = 'Match Tied';
+                    setResultImage('tie');
+                }
+            } else if (userChoice === 'Stump') {
+                if (computerChoice === 'Bat') {
+                    score_array.win++;
+                    gameResult = 'You Won the game';
+                    setResultImage('win');
+                } else if (computerChoice === 'Ball') {
+                    score_array.lost++;
+                    gameResult = 'You Lost the game';
+                    setResultImage('lose');
+                } else {
+                    score_array.tie++;
+                    gameResult = 'Match Tied';
+                    setResultImage('tie');
+                }
+            }
+
+            // Update the moves and result
+            user_move.innerText = `Your Choice: ${userChoice}`;
+            computer_move.innerText = `Computer's Choice: ${computerChoice}`;
+            result.innerText = `${gameResult}`;
+
+            // Save the updated score to localStorage
+            localStorage.setItem('score_array', JSON.stringify(score_array));
+
+            // Display the updated score
+            displayScore();
+        }
+
+        function setResultImage(outcome) {
+            const imageSources = {
+                win: 'trophy.gif',
+                lose: 'lose.gif',
+                tie: 'draw.png'
+            };
+            result_image.src = imageSources[outcome];
+            result_image.style.display = 'block';
+        }
+
+        // Reset the game and clear localStorage
+        function resetGame() {
+            localStorage.clear();
+            user_move.innerText = '';
+            computer_move.innerText = '';
+            result.innerText = '';
+            result_image.style.display = 'none';
+            
+            // Reset score array
+            score_array = {
+                win: 0,
+                lost: 0,
+                tie: 0,
+            };
+
+            displayScore();
+            alert("All records are reset");
+        }
+    </script>    
+</body>
+</html>
